@@ -1,41 +1,40 @@
-import * as React from 'react'; 
-import { createRoot } from 'react-dom/client'; 
+import * as React from 'react';
+import { createRoot } from 'react-dom/client';
+import FormGroup from '@mui/material/FormGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Switch from '@mui/material/Switch';
 
-import '../src/assets/style.css'; 
+import '../src/assets/style.css';
 
-async function addSticky() {
-    const stickyNote = await miro.board.createStickyNote({
-        content: 'Hello, World!', 
-    }); 
-    
-    await miro.board.viewport.zoomTo(stickyNote); 
-} 
+function handleChange(event) {
+  localStorage.setItem("RectangleStickyNoteSetting", event.target.checked)
+}
+
+function defaultCheck() {
+  var str = localStorage.getItem("RectangleStickyNoteSetting")
+  return JSON.parse(str.toLowerCase())
+}
 
 const App = () => {
-    React.useEffect(() => {
-        addSticky(); 
-    }, []); 
-    
-    return ( <div className="grid wrapper"> 
-      <div className="cs1 ce12"> 
-        <img src="/src/assets/congratulations.png" alt=""/> 
-      </div> 
-      <div className="cs1 ce12"> 
-        <h1>Congratulations!</h1> 
-        <p>You've just created your first Miro app!</p> 
-        <p> 
-          To explore more and build your own app, see the Miro Developer
-          Platform documentation.
-        </p> 
-      </div> 
-      <div className="cs1 ce12"> 
-        <a  className="button button-primary"  target="_blank"  href="https://developers.miro.com" > 
-          Read the documentation
-        </a> 
-      </div> 
-    </div> ); 
-}; 
+  React.useEffect(() => {
+    miro.board.events.on('message', (message) => {
+      console.log(message);
+    });
+  }, []);
+  return (<div className="grid wrapper">
+    <div className="cs1 ce12">
+      <FormGroup>
+        <FormControlLabel control={<Switch
+          onChange={handleChange}
+          defaultChecked={defaultCheck} />}
+          label="付箋のデフォルトを長方形にする" />
+      </FormGroup>
+    </div>
+  </div>);
+};
 
-const container = document.getElementById('root'); 
-const root = createRoot(container); 
+
+
+const container = document.getElementById('root');
+const root = createRoot(container);
 root.render(<App />); 
